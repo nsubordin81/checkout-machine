@@ -8,7 +8,7 @@ class CheckoutMachine
   end
 
   def scan(sku)
-    update_balance(sku)
+    process_item(sku)
 
     self.bonus_card_scanned = true if sku == 000
   end
@@ -27,17 +27,21 @@ class CheckoutMachine
     end
   end
 
-  def update_balance(sku)
+  def process_item(sku)
     if sku == 123
       self.chip_counter += 1
-      self.balance += 200
+      update_balance(200)
     elsif sku == 456
       self.salsa_counter += 1
-      self.balance += 100
+      update_balance(100)
     elsif sku == 789
-      self.balance += 1000
+      update_balance(1000)
     elsif sku == 111
-      self.balance += 550
+      update_balance(550)
     end
+  end
+
+  def update_balance(item_cost)
+    self.balance += item_cost
   end
 end

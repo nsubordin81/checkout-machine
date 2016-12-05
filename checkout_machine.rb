@@ -1,16 +1,23 @@
 class CheckoutMachine
-  attr_accessor :balance, :bonus_card_scanned, :salsa_counter, :chip_counter
-  def initialize(balance = 0, bonus_card_scanned = false, salsa_counter = 0, chip_counter = 0)
+  attr_accessor :balance, :bonus_card_scanned, :inventory
+  Item = Struct.new(:sku, :price, :counter, :discount_type)
+
+  def initialize(balance = 0, bonus_card_scanned = false, inventory = {})
     @balance = balance
     @bonus_card_scanned = bonus_card_scanned
-    @salsa_counter = salsa_counter
-    @chip_counter = chip_counter
+
+    @inventory = inventory
+    @inventory[000] = Item.new(000, 0, 0)
+    @inventory[123] = Item.new(123, 200, 0)
+    @inventory[456] = Item.new(456, 100, 0)
+    @inventory[789] = Item.new(789, 1000, 0)
+    @inventory[111] = Item.new(111, 550, 0)
   end
 
   def scan(sku)
-    process_item(sku)
-
-    self.bonus_card_scanned = true if sku == 000
+    update_item_count(sku)
+    update_balance(sku)
+    check_if_bonus(sku)
   end
 
   def total
@@ -20,28 +27,40 @@ class CheckoutMachine
 
   private
 
+  def check_if_bonus(sku)
+    self.bonus_card_scanned = true if sku == 000
+  end
+
   def apply_discount
     if self.bonus_card_scanned
-      self.balance -= 50 * self.salsa_counter
-      self.balance -= 200 * (self.chip_counter/3).floor
+      apply_salsa_discount
+      apply_chips_discount
     end
   end
 
-  def process_item(sku)
-    if sku == 123
-      self.chip_counter += 1
-      update_balance(200)
-    elsif sku == 456
-      self.salsa_counter += 1
-      update_balance(100)
-    elsif sku == 789
-      update_balance(1000)
-    elsif sku == 111
-      update_balance(550)
-    end
+  def apply_salsa_discount
+    salsa = self.inventory[456]
+    self.balance -= salsa.price * percentage_off(0.5, salsa.counter)
   end
 
-  def update_balance(item_cost)
-    self.balance += item_cost
+  def apply_chips_discount
+    chips = self.inventory[123]
+    self.balance -= chips.price * buy_x_get_one(2, chips.counter)
+  end
+
+  def percentage_off(percentage, counter)
+    percentage * counter
+  end
+
+  def buy_x_get_one(x, counter)
+    (counter/(x + 1)).floor
+  end
+
+  def update_item_count(sku)
+    self.inventory[sku].counter += 1
+  end
+
+  def update_balance(sku)
+    self.balance += self.inventory[sku].price
   end
 end

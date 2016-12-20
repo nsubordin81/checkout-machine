@@ -1,11 +1,11 @@
-require './inventory'
+require './scanner'
 require './discount_manager'
 
 class CheckoutMachine
   attr_reader :discount_manager, :inventory
 
   def initialize()
-    @inventory = Inventory.new([
+    @inventory = Scanner.new([
       [000, "card", 0],
       [123, "chips", 200],
       [456, "salsa", 100],

@@ -73,8 +73,9 @@ class CheckoutMachineTest < Minitest::Test
 
   def test_scan_salsa_with_bonus_card_expects_50
     # Arrange
-    @cm.scan(456) # salsa
 
+    @cm.scan(456) # salsa
+    
     # Act
     @cm.scan(000)
 

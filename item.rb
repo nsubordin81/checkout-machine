@@ -5,6 +5,5 @@ class Item
     @sku = sku
     @name = name
     @price = price
-
   end
 end

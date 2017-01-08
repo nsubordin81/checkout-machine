@@ -1,6 +1,7 @@
 class DiscountManager
 
   def determine_discount(sku, price, count)
+    discount = 0
     if sku == 456
      discount = price * percentage_off(0.5, count)
     elsif sku == 123

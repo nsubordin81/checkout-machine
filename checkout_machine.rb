@@ -1,31 +1,52 @@
-require './scanner'
+require './inventory'
+require './purchase_log'
 require './discount_manager'
 
 class CheckoutMachine
-  attr_reader :discount_manager, :inventory
+  attr_reader :discount_manager, :inventory, :purchase_log
 
   def initialize()
-    @inventory = Scanner.new([
+    @purchase_log = PurchaseLog.new
+    @inventory = Inventory.new([
       [000, "card", 0],
       [123, "chips", 200],
       [456, "salsa", 100],
       [789, "wine", 1000],
       [111, "cigarettes", 550]
     ])
-
     @discount_manager = DiscountManager.new
+    @balance = 0
   end
 
   def scan(sku)
-    inventory.scan_item(sku)
+    purchase_log.update_log_entries(sku)
   end
 
   def total
-   if inventory.bonus_card_scanned
-    inventory.balance -= discount_manager.determine_discount(456, inventory.get_item_price(456), inventory.get_item_count_by_sku(456))
-    inventory.balance -= discount_manager.determine_discount(123, inventory.get_item_price(123), inventory.get_item_count_by_sku(123))
+   if bonus_card_scanned
+    subtract_discounts
    end
-   inventory.balance
+   add_items
+   @balance
+  end
+
+  private 
+
+  def bonus_card_scanned
+    bonus_card = inventory.get_item_by_name("card") 
+    purchase_log.fetch_log_entry_count(bonus_card.sku) > 0
+  end
+
+  def subtract_discounts
+    inventory.items.each do |item|
+      @balance -= discount_manager.determine_discount(item.sku, item.price, purchase_log.fetch_log_entry_count(item.sku))
+    end
+  end
+
+  def add_items
+    inventory.items.each do |item|
+      @balance += item.price * purchase_log.fetch_log_entry_count(item.sku)
+    end
   end
 
 end

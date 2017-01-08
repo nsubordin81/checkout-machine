@@ -1,20 +1,18 @@
- class PurchaseLog
-  def initialize(log_entries, balance)
+class PurchaseLog
+  attr_reader :log_entries
+  LogEntry = Struct.new(:sku, :count)
+  
+  def initialize()
     @log_entries = []
   end
 
-  def log_entry(sku, count)
-    LogEntry.new(sku, count)
+  def log_entry(sku)
+    LogEntry.new(sku)
   end
 
   def update_log_entries(sku)
-    if log_entries.any?{|entry| sku == entry.sku}
-      count += 1
-    else
-      log_entries << log_entry(sku, count)
-      count = 1
-    end
-    count
+    existing_entry = log_entries.select {|entry| sku == entry.sku}.first
+    log_entries << log_entry(sku)
   end
 
   def fetch_log_entry_count(sku)

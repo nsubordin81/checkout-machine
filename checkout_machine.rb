@@ -5,16 +5,10 @@ require './discount_manager'
 class CheckoutMachine
   attr_reader :discount_manager, :inventory, :purchase_log
 
-  def initialize()
-    @purchase_log = PurchaseLog.new
-    @inventory = Inventory.new([
-      [000, "card", 0],
-      [123, "chips", 200],
-      [456, "salsa", 100],
-      [789, "wine", 1000],
-      [111, "cigarettes", 550]
-    ])
-    @discount_manager = DiscountManager.new
+  def initialize(purchase_log, inventory, discount_manager)
+    @purchase_log = purchase_log
+    @inventory = inventory
+    @discount_manager = discount_manager
     @balance = 0
   end
 

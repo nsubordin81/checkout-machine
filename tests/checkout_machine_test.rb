@@ -1,9 +1,21 @@
 require 'minitest/autorun'
 require_relative '../checkout_machine'
+require_relative '../inventory'
+require_relative '../purchase_log'
+require_relative '../discount_manager'
 
 class CheckoutMachineTest < Minitest::Test
   def setup
-    @cm = CheckoutMachine.new
+    @cm = CheckoutMachine.new(
+      PurchaseLog.new, 
+      Inventory.new([
+      [000, "card", 0],
+      [123, "chips", 200],
+      [456, "salsa", 100],
+      [789, "wine", 1000],
+      [111, "cigarettes", 550]
+      ]),
+      DiscountManager.new)
   end
 
   def test_scan_chips_expects_total_200

@@ -5,7 +5,7 @@ class Inventory
 
   def initialize(item_list)
     @items = item_list.collect {|item|
-      item(item[0], item[1], item[2])
+      Item.new(item[0], item[1], item[2])
     }
   end
 
@@ -15,9 +15,5 @@ class Inventory
 
   def get_item_by_name(name)
     items.select {|item| item.name == name}[0]
-  end
-
-  def item(sku, name, price)
-    Item.new(sku, name, price)
   end
 end

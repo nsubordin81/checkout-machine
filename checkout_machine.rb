@@ -17,41 +17,39 @@ class CheckoutMachine
   end
 
   def total
-   if bonus_card_scanned
-    subtract_discounts
+   if _bonus_card_scanned
+    _subtract_discounts
    end
-   add_items
+   _add_items
    @balance
-  end
+  end 
 
-  private 
-
-  def bonus_card_scanned
-    bonus_card = get_item_by_name("card") 
+  def _bonus_card_scanned
+    bonus_card = _get_item_by_name("card") 
     purchase_log.fetch_log_entry_count(bonus_card.sku) > 0
   end
 
-  def subtract_discounts
+  def _subtract_discounts
     inventory.items.each do |item|
-      @balance -= determine_discount(item.sku, item.price)
+      @balance -= _determine_discount(item.sku, item.price)
     end
   end
 
-  def add_items
+  def _add_items
     inventory.items.each do |item|
-      @balance += item.price * item_count(item.sku)
+      @balance += item.price * _item_count(item.sku)
     end
   end
 
-  def get_item_by_name(name)
+  def _get_item_by_name(name)
     inventory.get_item_by_name(name)
   end
 
-  def determine_discount(sku, price)
-    discount_manager.determine_discount(sku, price, item_count(sku))
+  def _determine_discount(sku, price)
+    discount_manager.determine_discount(sku, price,_item_count(sku))
   end
 
-  def item_count(sku)
+  def _item_count(sku)
     purchase_log.fetch_log_entry_count(sku)
   end
 

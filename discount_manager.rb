@@ -3,18 +3,18 @@ class DiscountManager
   def determine_discount(sku, price, count)
     discount = 0
     if sku == 456
-     discount = price * percentage_off(0.5, count)
+     discount = price * _percentage_off(0.5, count)
     elsif sku == 123
-     discount = price * buy_x_get_one(2, count)
+     discount = price * _buy_x_get_one(2, count)
     end
     discount
   end
 
-  def percentage_off(percentage, counter)
+  def _percentage_off(percentage, counter)
     percentage * counter
   end
 
-  def buy_x_get_one(x, counter)
+  def _buy_x_get_one(x, counter)
     (counter/(x + 1)).floor
   end
 end

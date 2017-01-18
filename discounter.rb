@@ -1,6 +1,12 @@
-class DiscountManager
+class Discounter
 
-  def determine_discount(sku, price, count)
+  def transact(tally)
+    has_bonus_card = !tally.select {|item, count| item.name == "card" && count > 0}.empty?
+    return 0 unless has_bonus_card
+    tally.reduce(0) {|memo, (item, count)| memo -= _determine_discount(item.sku, item.price, count)}
+  end
+
+  def _determine_discount(sku, price, count)
     discount = 0
     if sku == 456
      discount = price * _percentage_off(0.5, count)
